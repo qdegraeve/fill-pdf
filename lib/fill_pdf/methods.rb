@@ -37,6 +37,10 @@ module FillPdf
       logger exception
     end
 
+    def download
+      send_file export, filename: "Bulletin.pdf", type: 'application/pdf'
+    end
+
     protected
       def return_value(field)
         object.eval((dictionary[field.to_sym] || dictionary[field.to_s]).to_s) rescue nil
