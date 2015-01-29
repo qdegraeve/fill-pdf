@@ -9,15 +9,15 @@ Gem::Specification.new do |s|
   s.version     = FillPdf::VERSION
   s.authors     = ["Armand Niampa"]
   s.email       = ["armand.niampa@spear.fr"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of FillPdf."
-  s.description = "TODO: Description of FillPdf."
+  s.homepage    = "http://www.armandniampa.fr"
+  s.summary     = "A plugin for populate pdf fields and download it"
+  s.description = "A plugin for populate pdf fields and download it"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "rails", "~> 4.2.0"
+  s.add_dependency "rails", "~> 4.0.0"
 
-  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "pdf-forms"
 end
