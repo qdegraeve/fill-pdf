@@ -16,9 +16,11 @@ module FillPdf
 
     def populate #object must be binding
       template_field_names.each do |field|
-        set(field, dictionary[field.to_s])
+        set(field, return_value(field))
       end
+      attributes
     end
+
 
     def export
       dirname = Rails.application.config.fill_pdf.output_path
@@ -34,7 +36,12 @@ module FillPdf
     rescue Exception => exception
       logger exception
     end
+
     protected
+      def return_value(field)
+        object.eval((dictionary[field.to_sym] || dictionary[field.to_s]).to_s) rescue nil
+      end
+
       def logger(exception)
         Rails.logger.warn "------------An error occurred: -------------"
         Rails.logger.warn exception
