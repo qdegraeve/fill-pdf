@@ -1,4 +1,5 @@
 require 'fill_pdf/railtie' if defined? Rails
+include ActionView::Helpers::NumberHelper if defined? Rails
 require 'fill_pdf/methods'
 
 module FillPdf

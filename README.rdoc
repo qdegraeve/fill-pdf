@@ -43,7 +43,7 @@ The following configuration items are available through the config object in app
 
 :: Dictionary example
   def action
-    dictionary = { 
+    dictionary = {
       full_name: 'user.full_name',
       birth_date: 'user.birth_date',
       clear_address: 'user.clear_address',
@@ -61,7 +61,7 @@ The following configuration items are available through the config object in app
 
 :: Use plugin to generate and download document
   def action
-    dictionary = { 
+    dictionary = {
       full_name: 'user.full_name',
       birth_date: 'user.birth_date',
       clear_address: 'user.clear_address',

@@ -7,7 +7,7 @@ module FillPdf
     #
     # Object is object used to populate pdf field. This must be binding
     #
-    # dictionary is used for correspondence in  pdf fields with binding elements
+    # dictionary is used for correspondence in pdf fields with binding elements
     #
     def initialize(template, object=nil, dictionary={})
       @attributes = {}
@@ -19,17 +19,18 @@ module FillPdf
 
     # Return list of template fields in array
     #
-    def template_field_names 
+    def template_field_names
       pdftk.get_field_names template
     end
 
     # Populate attributes with values
     #
     def populate
+      @attributes = {}
       template_field_names.each do |field|
         set(field, return_value(field))
       end
-      attributes
+      @attributes
     end
     
     # This method populate attributes with data based on template fields.
@@ -42,11 +43,11 @@ module FillPdf
       dirname = Rails.application.config.fill_pdf.output_path
       Dir.mkdir(dirname) unless File.directory?(dirname)
 
-      populate 
+      populate
 
-      document =  Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf") 
+      document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
 
-      pdftk.fill_form template, document, attributes, :flatten => true 
+      pdftk.fill_form template, document, attributes, :flatten => true
       
       document
     rescue Exception => exception
@@ -57,8 +58,17 @@ module FillPdf
       # Based on dictionary this methods use object to return value
       #
       def return_value(field)
-        field = dictionary[field.to_sym] || dictionary[field.to_s]
-        object.send(field) rescue nil
+        hash = dictionary[field.to_sym] || dictionary[field.to_s]
+        value = hash[:value] || hash["value"] rescue nil
+        format = hash[:format] || hash["format"] rescue nil
+        case format
+        when 'number'
+          number_to_currency(object.eval(value).to_i, precision: 0) rescue nil
+        when 'date'
+          I18n.l(object.eval(value).to_date) rescue nil
+        else
+          object.eval(value) rescue nil
+        end
       end
 
       # Logger is a method used for log exceptions
@@ -71,6 +81,7 @@ module FillPdf
       end
 
       # This methods is setter for plugin attrinute named attributes
+      # 
       def set(attribute, value=nil)
         attributes[attribute.to_s] = value
       end
