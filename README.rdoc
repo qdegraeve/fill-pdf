@@ -44,15 +44,13 @@ The following configuration items are available through the config object in app
 :: Dictionary example
   def action
     dictionary = {
-      full_name: 'user.full_name',
-      birth_date: 'user.birth_date',
-      clear_address: 'user.clear_address',
-      phone: 'user.phone',
-      email: 'user.email',
-      part_number: 'to_part.to_i',
-      word_part_number: 'to_part.to_i.to_words',
-      amount: 'amount',
-      word_amount: 'amount.to_i.to_words',
+      name: {value:'user.full_name'},
+      address: {value:'user.clear_address'},
+      created_at: {value:'created_at', format: "date"},
+      payed_at: {value:'payed_at', format: "date"},
+      monthly_payment: {value:'monthly_payment', format: "currency"},
+      amount: {value:'amount', format: "currency"},
+      deduction_amount: {value:'deduction_amount_string'}
     }
     ...
 
@@ -62,20 +60,20 @@ The following configuration items are available through the config object in app
 :: Use plugin to generate and download document
   def action
     dictionary = {
-      full_name: 'user.full_name',
-      birth_date: 'user.birth_date',
-      clear_address: 'user.clear_address',
-      phone: 'user.phone',
-      email: 'user.email',
-      part_number: 'to_part.to_i',
-      word_part_number: 'to_part.to_i.to_words',
-      amount: 'amount',
-      word_amount: 'amount.to_i.to_words',
+      name: {value:'user.full_name'},
+      address: {value:'user.clear_address'},
+      created_at: {value:'created_at', format: "date"},
+      payed_at: {value:'payed_at', format: "date"},
+      monthly_payment: {value:'monthly_payment', format: "currency"},
+      amount: {value:'amount', format: "currency"},
+      deduction_amount: {value:'deduction_amount_string'}
     }
-
-    template = Rails.root.join('public', 'pdf_templates', 'pdf_file.pdf')
-    object = subscription.to_binding
-    
-    document = FillPdf::Fill.new(template, object , dictionary)
-    send_file document.export, filename: "name of your new document.pdf", type: 'application/pdf'
+    begin
+      object = subscription.to_binding
+      template = Rails.root.join('public', 'pdf_templates', 'pdf_file.pdf')
+      document = FillPdf::Fill.new(template, object , dictionary)
+      send_file document.export, filename: "name of your new document.pdf", type: 'application/pdf'
+    rescue Exception => exception
+      logger.warn exception
+    end
   end

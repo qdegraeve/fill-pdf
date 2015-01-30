@@ -143,15 +143,13 @@ in application.rb:</p>
 
 <pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">action</span>
   <span class="ruby-identifier">dictionary</span> = {
-    <span class="ruby-identifier">full_name</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.full_name&#39;</span>,
-    <span class="ruby-identifier">birth_date</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.birth_date&#39;</span>,
-    <span class="ruby-identifier">clear_address</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.clear_address&#39;</span>,
-    <span class="ruby-identifier">phone</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.phone&#39;</span>,
-    <span class="ruby-identifier">email</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.email&#39;</span>,
-    <span class="ruby-identifier">part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i&#39;</span>,
-    <span class="ruby-identifier">word_part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i.to_words&#39;</span>,
-    <span class="ruby-identifier">amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount&#39;</span>,
-    <span class="ruby-identifier">word_amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount.to_i.to_words&#39;</span>,
+    <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;user.full_name&#39;</span>},
+    <span class="ruby-identifier">address</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;user.clear_address&#39;</span>},
+    <span class="ruby-identifier">created_at</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;created_at&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;date&quot;</span>},
+    <span class="ruby-identifier">payed_at</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;payed_at&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;date&quot;</span>},
+    <span class="ruby-identifier">monthly_payment</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;monthly_payment&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;currency&quot;</span>},
+    <span class="ruby-identifier">amount</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;amount&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;currency&quot;</span>},
+    <span class="ruby-identifier">deduction_amount</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;deduction_amount_string&#39;</span>}
   }
   <span class="ruby-operator">...</span>
 
@@ -165,22 +163,22 @@ in application.rb:</p>
 
 <pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">action</span>
   <span class="ruby-identifier">dictionary</span> = {
-    <span class="ruby-identifier">full_name</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.full_name&#39;</span>,
-    <span class="ruby-identifier">birth_date</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.birth_date&#39;</span>,
-    <span class="ruby-identifier">clear_address</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.clear_address&#39;</span>,
-    <span class="ruby-identifier">phone</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.phone&#39;</span>,
-    <span class="ruby-identifier">email</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.email&#39;</span>,
-    <span class="ruby-identifier">part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i&#39;</span>,
-    <span class="ruby-identifier">word_part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i.to_words&#39;</span>,
-    <span class="ruby-identifier">amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount&#39;</span>,
-    <span class="ruby-identifier">word_amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount.to_i.to_words&#39;</span>,
+    <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;user.full_name&#39;</span>},
+    <span class="ruby-identifier">address</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;user.clear_address&#39;</span>},
+    <span class="ruby-identifier">created_at</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;created_at&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;date&quot;</span>},
+    <span class="ruby-identifier">payed_at</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;payed_at&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;date&quot;</span>},
+    <span class="ruby-identifier">monthly_payment</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;monthly_payment&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;currency&quot;</span>},
+    <span class="ruby-identifier">amount</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;amount&#39;</span>, <span class="ruby-identifier">format</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;currency&quot;</span>},
+    <span class="ruby-identifier">deduction_amount</span><span class="ruby-operator">:</span> {<span class="ruby-identifier">value</span>:<span class="ruby-string">&#39;deduction_amount_string&#39;</span>}
   }
-
-  <span class="ruby-identifier">template</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;public&#39;</span>, <span class="ruby-string">&#39;pdf_templates&#39;</span>, <span class="ruby-string">&#39;pdf_file.pdf&#39;</span>)
-  <span class="ruby-identifier">object</span> = <span class="ruby-identifier">subscription</span>.<span class="ruby-identifier">to_binding</span>
-
-  <span class="ruby-identifier">document</span> = <span class="ruby-constant">FillPdf</span><span class="ruby-operator">::</span><span class="ruby-constant">Fill</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">template</span>, <span class="ruby-identifier">object</span> , <span class="ruby-identifier">dictionary</span>)
-  <span class="ruby-identifier">send_file</span> <span class="ruby-identifier">document</span>.<span class="ruby-identifier">export</span>, <span class="ruby-identifier">filename</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;name of your new document.pdf&quot;</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;application/pdf&#39;</span>
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">object</span> = <span class="ruby-identifier">subscription</span>.<span class="ruby-identifier">to_binding</span>
+    <span class="ruby-identifier">template</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;public&#39;</span>, <span class="ruby-string">&#39;pdf_templates&#39;</span>, <span class="ruby-string">&#39;pdf_file.pdf&#39;</span>)
+    <span class="ruby-identifier">document</span> = <span class="ruby-constant">FillPdf</span><span class="ruby-operator">::</span><span class="ruby-constant">Fill</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">template</span>, <span class="ruby-identifier">object</span> , <span class="ruby-identifier">dictionary</span>)
+    <span class="ruby-identifier">send_file</span> <span class="ruby-identifier">document</span>.<span class="ruby-identifier">export</span>, <span class="ruby-identifier">filename</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;name of your new document.pdf&quot;</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;application/pdf&#39;</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-identifier">exception</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
 </pre>
 </main>
