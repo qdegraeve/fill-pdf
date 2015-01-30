@@ -28,7 +28,7 @@ module FillPdf
     def populate
       @attributes = {}
       template_field_names.each do |field|
-        set(field, return_value(field))
+        set(field, return_value(field).to_s)
       end
       @attributes
     end
@@ -62,8 +62,8 @@ module FillPdf
         value = hash[:value] || hash["value"] rescue nil
         format = hash[:format] || hash["format"] rescue nil
         case format
-        when 'number'
-          number_to_currency(object.eval(value).to_i, precision: 0) rescue nil
+        when 'currency'
+          number_to_currency(object.eval(value).to_i, precision: 0, unit: "Euro") rescue nil
         when 'date'
           I18n.l(object.eval(value).to_date) rescue nil
         else
