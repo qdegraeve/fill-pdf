@@ -1,3 +1,81 @@
 = FillPdf
 
-This project rocks and uses MIT-LICENSE..
+== Description
+
+This gem is a Ruby on Rails plugin. It permit to fill pdf form.
+
+== Installation
+
+Add these lines to your Gemfile:
+    gem 'fill_pdf', git: "ssh://git@git.capsens.eu/~/git/platform/fill_pdf.git"
+
+== Configuration
+
+The following configuration items are available through the config object in application.rb:
+  class Application < Rails::Application
+    ...
+    ...
+    # This is required to generate document and save it.
+      config.fill_pdf.output_path = ''
+
+    # This is required. It is a pdftk library path. Linux('/usr/bin/pdftk'), OSX('/usr/local/pdftk')
+      config.fill_pdf.pdftk_path = '/usr/bin/pdftk'
+
+== Conventions
+
+- All Hash keys must be string
+- Template is a path of a file(pdf)
+
+== Usage
+
+:: Describe FillPdf initializer
+  def initialize(template, object=nil, dictionary={})
+    @attributes = {}
+    @object = object
+    @template = template
+    @dictionary = dictionary
+    @pdftk = PdfForms.new(Rails.application.config.fill_pdf.pdftk_path)
+  end
+
+  # Template is a path of a template file.
+  # object is used to populate template fields.
+  # dictionary is used to get values in object and make correspondence with template fields.
+
+:: Dictionary example
+  def action
+    dictionary = { 
+      full_name: 'user.full_name',
+      birth_date: 'user.birth_date',
+      clear_address: 'user.clear_address',
+      phone: 'user.phone',
+      email: 'user.email',
+      part_number: 'to_part.to_i',
+      word_part_number: 'to_part.to_i.to_words',
+      amount: 'amount',
+      word_amount: 'amount.to_i.to_words',
+    }
+    ...
+
+    # dictionary key represent template fields
+    # value represent how to use oject(binding) to get value.
+
+:: Use plugin to generate and download document
+  def action
+    dictionary = { 
+      full_name: 'user.full_name',
+      birth_date: 'user.birth_date',
+      clear_address: 'user.clear_address',
+      phone: 'user.phone',
+      email: 'user.email',
+      part_number: 'to_part.to_i',
+      word_part_number: 'to_part.to_i.to_words',
+      amount: 'amount',
+      word_amount: 'amount.to_i.to_words',
+    }
+
+    template = Rails.root.join('public', 'pdf_templates', 'pdf_file.pdf')
+    object = subscription.to_binding
+    
+    document = FillPdf::Fill.new(template, object , dictionary)
+    send_file document.export, filename: "name of your new document.pdf", type: 'application/pdf'
+  end

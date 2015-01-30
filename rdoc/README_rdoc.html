@@ -54,6 +54,19 @@
   </div>
 
   
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#label-FillPdf">FillPdf</a>
+    <li><a href="#label-Description">Description</a>
+    <li><a href="#label-Installation">Installation</a>
+    <li><a href="#label-Configuration">Configuration</a>
+    <li><a href="#label-Conventions">Conventions</a>
+    <li><a href="#label-Usage">Usage</a>
+  </ul>
+</div>
+
 
   <div id="project-metadata">
     <div id="fileindex-section" class="nav-section">
@@ -73,7 +86,106 @@
 
 <h1 id="label-FillPdf"><a href="FillPdf.html">FillPdf</a><span><a href="#label-FillPdf">&para;</a> <a href="#documentation">&uarr;</a></span></h1>
 
-<p>This project rocks and uses MIT-LICENSE.</p>
+<h2 id="label-Description">Description<span><a href="#label-Description">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>This gem is a Ruby on Rails plugin. It permit to fill pdf form.</p>
+
+<h2 id="label-Installation">Installation<span><a href="#label-Installation">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>Add these lines to your Gemfile:</p>
+
+<pre>gem &#39;fill_pdf&#39;, git: &quot;ssh://git@git.capsens.eu/~/git/platform/fill_pdf.git&quot;</pre>
+
+<h2 id="label-Configuration">Configuration<span><a href="#label-Configuration">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>The following configuration items are available through the config object
+in application.rb:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Application</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">Application</span>
+  <span class="ruby-operator">...</span>
+  <span class="ruby-operator">...</span>
+  <span class="ruby-comment"># This is required to generate document and save it.</span>
+    <span class="ruby-identifier">config</span>.<span class="ruby-identifier">fill_pdf</span>.<span class="ruby-identifier">output_path</span> = <span class="ruby-string">&#39;&#39;</span>
+
+  <span class="ruby-comment"># This is required. It is a pdftk library path. Linux(&#39;/usr/bin/pdftk&#39;), OSX(&#39;/usr/local/pdftk&#39;)</span>
+    <span class="ruby-identifier">config</span>.<span class="ruby-identifier">fill_pdf</span>.<span class="ruby-identifier">pdftk_path</span> = <span class="ruby-string">&#39;/usr/bin/pdftk&#39;</span>
+</pre>
+
+<h2 id="label-Conventions">Conventions<span><a href="#label-Conventions">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<ul><li>
+<p>All Hash keys must be string</p>
+</li><li>
+<p>Template is a path of a file(pdf)</p>
+</li></ul>
+
+<h2 id="label-Usage">Usage<span><a href="#label-Usage">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<dl class="rdoc-list note-list"><dt>
+<dd>
+<p>Describe <a href="FillPdf.html">FillPdf</a> initializer</p>
+</dd></dl>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">template</span>, <span class="ruby-identifier">object</span>=<span class="ruby-keyword">nil</span>, <span class="ruby-identifier">dictionary</span>={})
+  <span class="ruby-ivar">@attributes</span> = {}
+  <span class="ruby-ivar">@object</span> = <span class="ruby-identifier">object</span>
+  <span class="ruby-ivar">@template</span> = <span class="ruby-identifier">template</span>
+  <span class="ruby-ivar">@dictionary</span> = <span class="ruby-identifier">dictionary</span>
+  <span class="ruby-ivar">@pdftk</span> = <span class="ruby-constant">PdfForms</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Rails</span>.<span class="ruby-identifier">application</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">fill_pdf</span>.<span class="ruby-identifier">pdftk_path</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Template is a path of a template file.</span>
+<span class="ruby-comment"># object is used to populate template fields.</span>
+<span class="ruby-comment"># dictionary is used to get values in object and make correspondence with template fields.</span>
+</pre>
+<dl class="rdoc-list note-list"><dt>
+<dd>
+<p>Dictionary example</p>
+</dd></dl>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">action</span>
+  <span class="ruby-identifier">dictionary</span> = { 
+    <span class="ruby-identifier">full_name</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.full_name&#39;</span>,
+    <span class="ruby-identifier">birth_date</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.birth_date&#39;</span>,
+    <span class="ruby-identifier">clear_address</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.clear_address&#39;</span>,
+    <span class="ruby-identifier">phone</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.phone&#39;</span>,
+    <span class="ruby-identifier">email</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.email&#39;</span>,
+    <span class="ruby-identifier">part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i&#39;</span>,
+    <span class="ruby-identifier">word_part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i.to_words&#39;</span>,
+    <span class="ruby-identifier">amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount&#39;</span>,
+    <span class="ruby-identifier">word_amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount.to_i.to_words&#39;</span>,
+  }
+  <span class="ruby-operator">...</span>
+
+  <span class="ruby-comment"># dictionary key represent template fields</span>
+  <span class="ruby-comment"># value represent how to use oject(binding) to get value.</span>
+</pre>
+<dl class="rdoc-list note-list"><dt>
+<dd>
+<p>Use plugin to generate and download document</p>
+</dd></dl>
+
+<pre class="ruby"><span class="ruby-keyword">def</span> <span class="ruby-identifier">action</span>
+  <span class="ruby-identifier">dictionary</span> = { 
+    <span class="ruby-identifier">full_name</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.full_name&#39;</span>,
+    <span class="ruby-identifier">birth_date</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.birth_date&#39;</span>,
+    <span class="ruby-identifier">clear_address</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.clear_address&#39;</span>,
+    <span class="ruby-identifier">phone</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.phone&#39;</span>,
+    <span class="ruby-identifier">email</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;user.email&#39;</span>,
+    <span class="ruby-identifier">part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i&#39;</span>,
+    <span class="ruby-identifier">word_part_number</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;to_part.to_i.to_words&#39;</span>,
+    <span class="ruby-identifier">amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount&#39;</span>,
+    <span class="ruby-identifier">word_amount</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;amount.to_i.to_words&#39;</span>,
+  }
+
+  <span class="ruby-identifier">template</span> = <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;public&#39;</span>, <span class="ruby-string">&#39;pdf_templates&#39;</span>, <span class="ruby-string">&#39;pdf_file.pdf&#39;</span>)
+  <span class="ruby-identifier">object</span> = <span class="ruby-identifier">subscription</span>.<span class="ruby-identifier">to_binding</span>
+
+  <span class="ruby-identifier">document</span> = <span class="ruby-constant">FillPdf</span><span class="ruby-operator">::</span><span class="ruby-constant">Fill</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">template</span>, <span class="ruby-identifier">object</span> , <span class="ruby-identifier">dictionary</span>)
+  <span class="ruby-identifier">send_file</span> <span class="ruby-identifier">document</span>.<span class="ruby-identifier">export</span>, <span class="ruby-identifier">filename</span><span class="ruby-operator">:</span> <span class="ruby-string">&quot;name of your new document.pdf&quot;</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;application/pdf&#39;</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>[![Build Status](<a
+href="https://travis-ci.org/rails/rails.svg?branch=master)](https://travis-ci.org/rails/rails">travis-ci.org/rails/rails.svg?branch=master)](https://travis-ci.org/rails/rails</a>)</p>
 </main>
 
 
