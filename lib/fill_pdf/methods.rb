@@ -25,6 +25,7 @@ module FillPdf
       template_field_names.each do |field|
         set(field, value(field).to_s)
       end
+      @attributes
     end
 
     # This method populate attributes with data based on template fields.
