@@ -13,25 +13,25 @@ Add these lines to your Gemfile:
 
 The following configuration items are available through the config object in application.rb:
   class Application < Rails::Application
-    ...
-    ...
+    # ...
+    # ...
     # This is required to generate document and save it.
       config.fill_pdf.output_path = ''
 
     # This is required. It is a pdftk library path. Linux('/usr/bin/pdftk'), OSX('/usr/local/pdftk')
       config.fill_pdf.pdftk_path = '/usr/bin/pdftk'
+  end
 
 == Conventions
 
 - All Hash keys must be string
-- Template is a path of a file(pdf)
+- Template is a path of your pdf file
 
 == Usage
 
 :: Describe FillPdf initializer
   def initialize(template, dictionary={})
     @attributes = {}
-    @object = object
     @template = template
     @dictionary = dictionary
     @pdftk = PdfForms.new(Rails.application.config.fill_pdf.pdftk_path)
@@ -51,10 +51,13 @@ The following configuration items are available through the config object in app
       amount: '2000 €',
       deduction_amount: '300 €'
     }
-    ...
 
-    # dictionary key represent template fields
-    # value represent how to use oject(binding) to get value.
+    # dictionary key represent template field
+    # value represent field value
+
+    #...
+    #...
+  end
 
 :: Use plugin to generate and download document
   def action
@@ -69,9 +72,8 @@ The following configuration items are available through the config object in app
     }
 
     begin
-      object = subscription.to_binding
       template = Rails.root.join('public', 'pdf_templates', 'pdf_file.pdf')
-      document = FillPdf::Fill.new(template, object , dictionary)
+      document = FillPdf::Fill.new(template, dictionary)
       send_file document.export, filename: "name of your new document.pdf", type: 'application/pdf'
     rescue Exception => exception
       logger.warn exception

@@ -1,14 +1,5 @@
 module FillPdf
   class Fill
-    # Fill class attributes
-    #
-    # pdftk contains pdftk library path.
-    #.
-    # template is Path of your pdf file.
-    #
-    # dictionary is a hash contains pdf fields values. This hash keys should be pdf fields names.
-    #
-    # dirname is a path of directory contains generate documents.
     attr_accessor :pdftk, :template, :attributes, :dictionary, :dirname
 
     # Template is path of a pdf file
