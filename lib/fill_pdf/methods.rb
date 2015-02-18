@@ -1,19 +1,23 @@
 module FillPdf
   class Fill
     # Fill class attributes
-    attr_accessor :pdftk, :template, :attributes, :dictionary, :object
-    
+    #
+    # pdftk contains pdftk library path.
+    #.
+    # template is Path of your pdf file.
+    #
+    # dictionary is a hash contains pdf fields values. This hash keys should be pdf fields names.
+    #
+    # dirname is a path of directory contains generate documents.
+    attr_accessor :pdftk, :template, :attributes, :dictionary, :dirname
+
     # Template is path of a pdf file
     #
-    # Object is object used to populate pdf field. This must be binding
-    #
-    # dictionary is used for correspondence in pdf fields with binding elements
-    #
-    def initialize(template, object=nil, dictionary={})
+    def initialize(template, dictionary={})
       @attributes = {}
-      @object = object
       @template = template
       @dictionary = dictionary
+      @dirname = Rails.application.config.fill_pdf.output_path
       @pdftk = PdfForms.new(Rails.application.config.fill_pdf.pdftk_path)
     end
 
@@ -23,52 +27,46 @@ module FillPdf
       pdftk.get_field_names template
     end
 
-    # Populate attributes with values
+    # Populate all pdf fields with values.
     #
     def populate
       @attributes = {}
       template_field_names.each do |field|
-        set(field, return_value(field).to_s)
+        set(field, value(field).to_s)
       end
-      @attributes
     end
-    
+
     # This method populate attributes with data based on template fields.
     #
     # Generate document path.
     #
     # Create new document and return path of this document.
     #
-    def export
-      dirname = Rails.application.config.fill_pdf.output_path
-      Dir.mkdir(dirname) unless File.directory?(dirname)
 
+    def export
+      # Create directory used for store documents
+      Dir.mkdir(@dirname) unless File.directory?(@dirname)
+
+      #call method populate to set field with value.
       populate
 
+      # Generate Path of document
       document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
 
+      # Generate document
       pdftk.fill_form template, document, attributes, :flatten => true
-      
+
+      # Return path of document
       document
     rescue Exception => exception
       logger exception
     end
 
     protected
-      # Based on dictionary this methods use object to return value
+      # Based on dictionary this methods return value of fields
       #
-      def return_value(field)
-        hash = dictionary[field.to_sym] || dictionary[field.to_s]
-        value = hash[:value] || hash["value"] rescue nil
-        format = hash[:format] || hash["format"] rescue nil
-        case format
-        when 'currency'
-          number_to_currency(object.eval(value).to_i, precision: 0, unit: "Euro") rescue nil
-        when 'date'
-          I18n.l(object.eval(value).to_date) rescue nil
-        else
-          object.eval(value) rescue nil
-        end
+      def value(field)
+        dictionary[field.to_sym] || dictionary[field.to_s] rescue nil
       end
 
       # Logger is a method used for log exceptions
@@ -80,8 +78,8 @@ module FillPdf
         false
       end
 
-      # This methods is setter for plugin attrinute named attributes
-      # 
+      # This methods is setter for used to set field value
+      #
       def set(attribute, value=nil)
         attributes[attribute.to_s] = value
       end
