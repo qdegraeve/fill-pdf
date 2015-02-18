@@ -34,7 +34,6 @@ module FillPdf
     #
     # Create new document and return path of this document.
     #
-
     def export
       # Create directory used for store documents
       Dir.mkdir(@dirname) unless File.directory?(@dirname)
