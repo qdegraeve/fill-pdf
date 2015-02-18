@@ -29,7 +29,7 @@ The following configuration items are available through the config object in app
 == Usage
 
 :: Describe FillPdf initializer
-  def initialize(template, object=nil, dictionary={})
+  def initialize(template, dictionary={})
     @attributes = {}
     @object = object
     @template = template
@@ -38,19 +38,18 @@ The following configuration items are available through the config object in app
   end
 
   # Template is a path of a template file.
-  # object is used to populate template fields.
-  # dictionary is used to get values in object and make correspondence with template fields.
+  # dictionary is a hash contains pdf fields values. This hash keys should be pdf fields names.
 
 :: Dictionary example
   def action
     dictionary = {
-      name: {value:'user.full_name'},
-      address: {value:'user.clear_address'},
-      created_at: {value:'created_at', format: "date"},
-      payed_at: {value:'payed_at', format: "date"},
-      monthly_payment: {value:'monthly_payment', format: "currency"},
-      amount: {value:'amount', format: "currency"},
-      deduction_amount: {value:'deduction_amount_string'}
+      name: 'Armand Niampa',
+      address: '80 rue des haies, 75020 Paris, France',
+      created_at: '20/01/2015/',
+      payed_at: '20/01/2015/',
+      monthly_payment: '200 €',
+      amount: '2000 €',
+      deduction_amount: '300 €'
     }
     ...
 
@@ -60,14 +59,15 @@ The following configuration items are available through the config object in app
 :: Use plugin to generate and download document
   def action
     dictionary = {
-      name: {value:'user.full_name'},
-      address: {value:'user.clear_address'},
-      created_at: {value:'created_at', format: "date"},
-      payed_at: {value:'payed_at', format: "date"},
-      monthly_payment: {value:'monthly_payment', format: "currency"},
-      amount: {value:'amount', format: "currency"},
-      deduction_amount: {value:'deduction_amount_string'}
+      name: 'Armand Niampa',
+      address: '80 rue des haies, 75020 Paris, France',
+      created_at: '20/01/2015/',
+      payed_at: '20/01/2015/',
+      monthly_payment: '200 €',
+      amount: '2000 €',
+      deduction_amount: '300 €'
     }
+
     begin
       object = subscription.to_binding
       template = Rails.root.join('public', 'pdf_templates', 'pdf_file.pdf')
