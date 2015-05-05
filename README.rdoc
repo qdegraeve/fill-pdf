@@ -19,7 +19,11 @@ The following configuration items are available through the config object in app
       config.fill_pdf.output_path = ''
 
     # This is required. It is a pdftk library path. Linux('/usr/bin/pdftk'), OSX('/usr/local/pdftk')
+    if RUBY_PLATFORM.include? "darwin"
+      config.fill_pdf.pdftk_path = '/usr/local/bin/pdftk'
+    else
       config.fill_pdf.pdftk_path = '/usr/bin/pdftk'
+    end
   end
 
 == Conventions
