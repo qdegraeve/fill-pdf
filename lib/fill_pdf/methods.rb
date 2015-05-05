@@ -53,6 +53,13 @@ module FillPdf
       logger exception
     end
 
+    def to_blob
+      document = export
+      blob = document.read
+      File.unlink document rescue nil
+      blob
+    end
+
     protected
       # Based on dictionary this methods return value of fields
       #
