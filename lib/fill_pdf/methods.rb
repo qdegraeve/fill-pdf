@@ -60,6 +60,19 @@ module FillPdf
       blob
     end
 
+    def blob_join_with(blob)
+      pdf = CombinePDF.new
+      pdf << CombinePDF.parse(to_blob)
+      pdf << CombinePDF.parse(blob)
+      pdf
+    end
+
+    def join_with(blob)
+      document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+      blob_join_with(blob).save document
+      document
+    end
+
     protected
       # Based on dictionary this methods return value of fields
       #

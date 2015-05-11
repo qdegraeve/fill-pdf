@@ -4,4 +4,5 @@ require 'fill_pdf/methods'
 
 module FillPdf
   require 'pdf_forms'
+  require 'combine_pdf'
 end
