@@ -54,22 +54,25 @@ module FillPdf
     end
 
     def to_blob
-      document = export
-      blob = document.read
-      File.unlink document rescue nil
+      blober(export)
+    end
+
+    def blober(file)
+      blob = file.read
+      File.unlink file rescue nil
       blob
     end
 
     def blob_join_with(blob)
-      pdf = CombinePDF.new
-      pdf << CombinePDF.parse(to_blob)
-      pdf << CombinePDF.parse(blob)
-      pdf
+      blober(join_with(blob))
     end
 
     def join_with(blob)
       document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
-      blob_join_with(blob).save document
+      pdf = CombinePDF.new
+      pdf << CombinePDF.parse(to_blob)
+      pdf << CombinePDF.parse(blob)
+      pdf.save document
       document
     end
 
