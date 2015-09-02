@@ -9,7 +9,7 @@ module FillPdf
       @template = template
       @dictionary = dictionary
       @dirname = Rails.application.config.fill_pdf.output_path
-      @pdftk = PdfForms.new(Rails.application.config.fill_pdf.pdftk_path)
+      @pdftk = PdfForms.new(Utilities.which('pdftk'))
     end
 
     # Return list of template fields in array

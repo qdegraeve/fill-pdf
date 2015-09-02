@@ -7,12 +7,15 @@ require "fill_pdf/version"
 Gem::Specification.new do |s|
   s.name        = "fill_pdf"
   s.version     = FillPdf::VERSION
+  s.platform    = Gem::Platform::RUBY
+  s.summary     = "A plugin for populate fields in a pdf file and download it."
+  s.description = "A plugin for populate fields in a pdf file and download it."
+  s.requirements << 'You must have pdftk installed'
+  s.license     = "MIT"
+
   s.authors     = ["Armand Niampa", "Hubert Lobit"]
   s.email       = ["armand.niampa@spear.fr", "hubert.lobit@capsens.eu"]
   s.homepage    = "http://www.capsens.eu"
-  s.summary     = "A plugin for populate fields in a pdf file and download it."
-  s.description = "A plugin for populate fields in a pdf file and download it."
-  s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
