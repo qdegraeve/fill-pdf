@@ -1,14 +1,15 @@
 module FillPdf
   class Fill
-    attr_accessor :pdftk, :template, :attributes, :dictionary
+    attr_accessor :pdftk, :template, :attributes, :dictionary, :logger
 
     # Template is path of a pdf file
     #
     def initialize(template, dictionary={})
+      @dirname = Rails.application.config.fill_pdf.output_path if defined? Rails
+
       @attributes = {}
       @template = template
       @dictionary = dictionary
-      @dirname = Rails.application.config.fill_pdf.output_path
       @pdftk = PdfForms.new(Utilities.which('pdftk'))
     end
 
@@ -44,7 +45,11 @@ module FillPdf
       populate
 
       # Generate Path of document
-      document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+      document = if defined? Rails
+        Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+      else
+        File.join(dirname, "#{SecureRandom.uuid}.pdf")
+      end
 
       # Generate document
       pdftk.fill_form template, document, attributes, :flatten => true
@@ -71,7 +76,13 @@ module FillPdf
 
     def join_with(blob, output_directory = nil)
       dirname = output_directory || @dirname
-      document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+
+      document = if defined? Rails
+        Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+      else
+        File.join(dirname, "#{SecureRandom.uuid}.pdf")
+      end
+
       pdf = CombinePDF.new
       pdf << CombinePDF.parse(to_blob)
       pdf << CombinePDF.parse(blob)
@@ -89,15 +100,17 @@ module FillPdf
       # Logger is a method used for log exceptions
       #
       def logger(exception)
-        Rails.logger.warn "------------An error occurred: -------------"
-        Rails.logger.warn exception
-        Rails.logger.warn "--------------------------------------------"
+        if defined? Rails
+          Rails.logger.warn "------------An error occurred: -------------"
+          Rails.logger.warn exception
+          Rails.logger.warn "--------------------------------------------"
+        end
         false
       end
 
       # This methods is setter for used to set field value
       #
-      def set(attribute, value=nil)
+      def set(attribute, value = nil)
         attributes[attribute.to_s] = value
       end
   end
