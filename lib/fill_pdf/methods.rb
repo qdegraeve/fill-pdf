@@ -1,6 +1,6 @@
 module FillPdf
   class Fill
-    attr_accessor :pdftk, :template, :attributes, :dictionary, :dirname
+    attr_accessor :pdftk, :template, :attributes, :dictionary
 
     # Template is path of a pdf file
     #
@@ -34,9 +34,11 @@ module FillPdf
     #
     # Create new document and return path of this document.
     #
-    def export
+    def export(output_directory = nil)
+      dirname = output_directory || @dirname
+
       # Create directory used for store documents
-      Dir.mkdir(@dirname) unless File.directory?(@dirname)
+      Dir.mkdir(dirname) unless File.directory?(dirname)
 
       #call method populate to set field with value.
       populate
@@ -67,7 +69,8 @@ module FillPdf
       blober(join_with(blob))
     end
 
-    def join_with(blob)
+    def join_with(blob, output_directory = nil)
+      dirname = output_directory || @dirname
       document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
       pdf = CombinePDF.new
       pdf << CombinePDF.parse(to_blob)
