@@ -56,8 +56,6 @@ module FillPdf
 
       # Return path of document
       document
-    rescue Exception => exception
-      logger exception
     end
 
     def to_blob
@@ -95,17 +93,6 @@ module FillPdf
       #
       def value(field)
         dictionary[field.to_sym] || dictionary[field.to_s] rescue nil
-      end
-
-      # Logger is a method used for log exceptions
-      #
-      def logger(exception)
-        if defined? Rails
-          Rails.logger.warn "------------An error occurred: -------------"
-          Rails.logger.warn exception
-          Rails.logger.warn "--------------------------------------------"
-        end
-        false
       end
 
       # This methods is setter for used to set field value
