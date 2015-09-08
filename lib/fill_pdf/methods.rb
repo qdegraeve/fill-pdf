@@ -8,7 +8,15 @@ module FillPdf
       @attributes = {}
       @template = template
       @dictionary = dictionary
-      @pdftk = PdfForms.new
+
+      # adjust the pdftk path to suit your pdftk installation
+      # add :data_format => 'XFdf' option to generate XFDF instead of FDF when
+      # filling a form (XFDF is supposed to have better support for non-western
+      # encodings)
+      # add :utf8_fields => true in order to get UTF8 encoded field metadata (this
+      # will use dump_data_fields_utf8 instead of dump_data_fields in the call to
+      # pdftk)
+      @pdftk = PdfForms.new(utf8_fields: true)
     end
 
     # Return list of template fields in array
