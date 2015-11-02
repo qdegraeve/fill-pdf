@@ -1,6 +1,6 @@
 module FillPdf
   class Fill
-    attr_accessor :pdftk, :template, :attributes, :dictionary, :dirname
+    attr_accessor :pdftk, :template, :attributes, :dictionary, :logger
 
     # Template is path of a pdf file
     #
@@ -8,8 +8,15 @@ module FillPdf
       @attributes = {}
       @template = template
       @dictionary = dictionary
-      @dirname = Rails.application.config.fill_pdf.output_path
-      @pdftk = PdfForms.new(Rails.application.config.fill_pdf.pdftk_path)
+
+      # adjust the pdftk path to suit your pdftk installation
+      # add :data_format => 'XFdf' option to generate XFDF instead of FDF when
+      # filling a form (XFDF is supposed to have better support for non-western
+      # encodings)
+      # add :utf8_fields => true in order to get UTF8 encoded field metadata (this
+      # will use dump_data_fields_utf8 instead of dump_data_fields in the call to
+      # pdftk)
+      @pdftk = PdfForms.new(utf8_fields: true)
     end
 
     # Return list of template fields in array
@@ -28,47 +35,43 @@ module FillPdf
       @attributes
     end
 
+    def generate
+      populate
+      tmp = Tempfile.new('pdf_generated-fillpdf')
+      pdftk.fill_form template, tmp.path, attributes, :flatten => true
+      tmp
+    end
+
     # This method populate attributes with data based on template fields.
     #
     # Generate document path.
     #
     # Create new document and return path of this document.
     #
-    def export
-      # Create directory used for store documents
-      Dir.mkdir(@dirname) unless File.directory?(@dirname)
-
-      #call method populate to set field with value.
+    def export(path = nil)
+      pathname = output_path(path)
       populate
-
-      # Generate Path of document
-      document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
-
-      # Generate document
-      pdftk.fill_form template, document, attributes, :flatten => true
-
-      # Return path of document
-      document
-    rescue Exception => exception
-      logger exception
+      pdftk.fill_form template, pathname, attributes, :flatten => true
+      pathname
     end
 
     def to_blob
-      blober(export)
-    end
-
-    def blober(file)
-      blob = file.read
-      File.unlink file rescue nil
-      blob
+      generate.read
     end
 
     def blob_join_with(blob)
       blober(join_with(blob))
     end
 
-    def join_with(blob)
-      document = Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+    def join_with(blob, path = nil)
+      pathname = output_path(path)
+
+      document = if defined? Rails
+        Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+      else
+        File.join(dirname, "#{SecureRandom.uuid}.pdf")
+      end
+
       pdf = CombinePDF.new
       pdf << CombinePDF.parse(to_blob)
       pdf << CombinePDF.parse(blob)
@@ -77,24 +80,30 @@ module FillPdf
     end
 
     protected
+      # This method defines the output_path
+      #
+      def output_path(path = nil)
+        unless path.nil?
+          pathname = path
+        else
+          if defined?(Rails)
+            output_path = Rails.application.config.fill_pdf.output_path || "tmp"
+            pathname = Rails.root.join(output_path, "#{SecureRandom.uuid}.pdf")
+          end
+        end
+        raise 'No path given for export.' if pathname.nil?
+        pathname
+      end
+
       # Based on dictionary this methods return value of fields
       #
       def value(field)
         dictionary[field.to_sym] || dictionary[field.to_s] rescue nil
       end
 
-      # Logger is a method used for log exceptions
-      #
-      def logger(exception)
-        Rails.logger.warn "------------An error occurred: -------------"
-        Rails.logger.warn exception
-        Rails.logger.warn "--------------------------------------------"
-        false
-      end
-
       # This methods is setter for used to set field value
       #
-      def set(attribute, value=nil)
+      def set(attribute, value = nil)
         attributes[attribute.to_s] = value
       end
   end
