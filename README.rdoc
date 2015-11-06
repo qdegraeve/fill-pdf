@@ -7,7 +7,7 @@ This gem is a Ruby on Rails plugin. It permit to fill pdf form.
 == Installation
 
 Add these lines to your Gemfile:
-    gem 'fill_pdf', git: "ssh://git@git.capsens.eu/~/git/platform/fill_pdf.git"
+    gem 'fill_pdf', git: "https://github.com/CapSens/fill-pdf"
 
 == Configuration
 
