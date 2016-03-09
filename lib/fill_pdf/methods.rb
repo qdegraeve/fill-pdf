@@ -4,7 +4,7 @@ module FillPdf
 
     # Template is path of a pdf file
     #
-    def initialize(template, dictionary={})
+    def initialize(template, dictionary = {})
       @attributes = {}
       @template = template
       @dictionary = dictionary
@@ -16,7 +16,7 @@ module FillPdf
       # add :utf8_fields => true in order to get UTF8 encoded field metadata (this
       # will use dump_data_fields_utf8 instead of dump_data_fields in the call to
       # pdftk)
-      @pdftk = PdfForms.new(utf8_fields: true)
+      @pdftk = PdfForms.new(utf8_fields: true, data_format: 'XFdf')
     end
 
     # Return list of template fields in array
@@ -38,7 +38,7 @@ module FillPdf
     def generate
       populate
       tmp = Tempfile.new('pdf_generated-fillpdf')
-      pdftk.fill_form template, tmp.path, attributes, :flatten => true
+      pdftk.fill_form template, tmp.path, attributes, flatten: true
       tmp
     end
 
@@ -51,7 +51,7 @@ module FillPdf
     def export(path = nil)
       pathname = output_path(path)
       populate
-      pdftk.fill_form template, pathname, attributes, :flatten => true
+      pdftk.fill_form template, pathname, attributes, flatten: true
       pathname
     end
 
@@ -63,14 +63,12 @@ module FillPdf
       blober(join_with(blob))
     end
 
-    def join_with(blob, path = nil)
-      pathname = output_path(path)
-
+    def join_with(blob, _path = nil)
       document = if defined? Rails
-        Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
-      else
-        File.join(dirname, "#{SecureRandom.uuid}.pdf")
-      end
+                   Rails.root.join(dirname, "#{SecureRandom.uuid}.pdf")
+                 else
+                   File.join(dirname, "#{SecureRandom.uuid}.pdf")
+                 end
 
       pdf = CombinePDF.new
       pdf << CombinePDF.parse(to_blob)
@@ -80,31 +78,34 @@ module FillPdf
     end
 
     protected
-      # This method defines the output_path
-      #
-      def output_path(path = nil)
-        unless path.nil?
-          pathname = path
-        else
-          if defined?(Rails)
-            output_path = Rails.application.config.fill_pdf.output_path || "tmp"
-            pathname = Rails.root.join(output_path, "#{SecureRandom.uuid}.pdf")
-          end
+
+    # This method defines the output_path
+    #
+    def output_path(path = nil)
+      unless path.nil?
+        pathname = path
+      else
+        if defined?(Rails)
+          output_path = Rails.application.config.fill_pdf.output_path || 'tmp'
+          pathname = Rails.root.join(output_path, "#{SecureRandom.uuid}.pdf")
         end
-        raise 'No path given for export.' if pathname.nil?
-        pathname
       end
+      raise 'No path given for export.' if pathname.nil?
+      pathname
+    end
 
-      # Based on dictionary this methods return value of fields
-      #
-      def value(field)
-        dictionary[field.to_sym] || dictionary[field.to_s] rescue nil
-      end
+    # Based on dictionary this methods return value of fields
+    #
+    def value(field)
+      dictionary[field.to_sym] || dictionary[field.to_s]
+    rescue
+      nil
+    end
 
-      # This methods is setter for used to set field value
-      #
-      def set(attribute, value = nil)
-        attributes[attribute.to_s] = value
-      end
+    # This methods is setter for used to set field value
+    #
+    def set(attribute, value = nil)
+      attributes[attribute.to_s] = value
+    end
   end
 end
