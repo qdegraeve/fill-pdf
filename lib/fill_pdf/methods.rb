@@ -35,10 +35,10 @@ module FillPdf
       @attributes
     end
 
-    def generate
+    def generate(flatten = true)
       populate
       tmp = Tempfile.new('pdf_generated-fillpdf')
-      pdftk.fill_form template, tmp.path, attributes, flatten: true
+      pdftk.fill_form template, tmp.path, attributes, flatten: flatten
       tmp
     end
 
@@ -48,10 +48,10 @@ module FillPdf
     #
     # Create new document and return path of this document.
     #
-    def export(path = nil)
+    def export(path = nil, flatten = true)
       pathname = output_path(path)
       populate
-      pdftk.fill_form template, pathname, attributes, flatten: true
+      pdftk.fill_form template, pathname, attributes, flatten: flatten
       pathname
     end
 
